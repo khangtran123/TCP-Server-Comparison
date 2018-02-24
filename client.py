@@ -27,12 +27,12 @@ global totalRequests
 totalMessages = 0
 
 #  THis function invokes multi-threading to create multiple clients
-def spawn_clients(machineAddr, clients, serverAddr, serverPort, echoedMsg, echoedNUM):
+def spawn_clients(machineAddr, clients, serverAddr, serverPort, echoedMsg, echoedNUM, totalRequests, output_file):
     threadQueue = []
     clientID = 1
     for i in range(clients):
         #  threading.Thread() starts a new thread and passes in args
-        thread = threading.Thread(target=start_engine, args=(machineAddr, clientID, serverAddr, serverPort, echoedMsg, echoedNUM))
+        thread = threading.Thread(target=start_engine, args=(machineAddr, clientID, clients, serverAddr, serverPort, echoedMsg, echoedNUM, totalRequests, output_file))
         #  now we want to load up the array "threadQueue"
         threadQueue.append(thread)
         print ("Starting Client #" + str(clientID))
@@ -43,7 +43,7 @@ def spawn_clients(machineAddr, clients, serverAddr, serverPort, echoedMsg, echoe
     for thread in threadQueue:
         thread.join()
 
-def start_engine(machineAddr, clientID, serverAddr, serverPort, echoedMsg, echoedNUM):
+def start_engine(machineAddr, clientID, clients, serverAddr, serverPort, echoedMsg, echoedNUM, totalRequests, output_file):
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((serverAddr, serverPort))
@@ -63,8 +63,8 @@ def start_engine(machineAddr, clientID, serverAddr, serverPort, echoedMsg, echoe
                 print ("Client: " + str(clientID) + " --> has iterated through total number of messages to echo out. Server will be notified.")
                 s.send('done')
             else:
-                s.send(echoData)
-                print ("Message sent!")
+                s.send(echoData.encode('utf-8'))
+                print ("Message was sent: " + echoData)
                 # This value will continuously increment in value after every msg sent --> will output the total bytes sent to client
                 totalMessages += echoData
             recvMsg = s.recv(1024)
@@ -77,10 +77,10 @@ def start_engine(machineAddr, clientID, serverAddr, serverPort, echoedMsg, echoe
             avgRTT = RTT / totalRTT
             #  now we want to output the results of this echo stats to the log file
             output_file.write("\n Client #" + str(clientID) + " sent out a total of " + str(echoedNUM) + " messages with a total roundtrip time of " + str(RTT) + " seconds.")
-            result_to_file(RTT, totalRTT, avgRTT, totalMessages)
+            result_to_file(clients, totalRTT, avgRTT, totalMessages, totalRequests, output_file)
             
 
-def result_to_file(RTT, totalRTT, avgRTT, totalMessages):
+def result_to_file(clients, totalRTT, avgRTT, totalMessages, totalRequests, output_file):
     output_file.write("\n Total Number of Clients: " + clients)
     output_file.write("\n Total Number of Requests: " + totalRequests)
     output_file.write("\n Total Data Sent to server: " + str(totalMessages) + " Bytes")
@@ -112,7 +112,7 @@ def main():
             print ("The message cannot be null! You must send something")
             echoedMsg = raw_input("What do you want to echo to the server? (Enter a string)")
         else:
-            spawn_clients(machineAddr, int(clients), serverAddr, serverPort, echoedMsg, int(echoedNUM))
+            spawn_clients(machineAddr, int(clients), serverAddr, serverPort, echoedMsg, int(echoedNUM), totalRequests, output_file)
 
 
 if __name__ == "__main__": main()
