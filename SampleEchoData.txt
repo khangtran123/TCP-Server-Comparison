@@ -1,0 +1,10 @@
+"""Hey there server. It's me, your friendly neighbour Spiderman. Wait is that even right? Spiderman is the
+    most insane character in the MCU and come on.... Peter Parker is awesome especially his relationship with Mary Jane! I am
+    so getting out of context here. I am getting too hyped with MCU eversince we all went to go see Black Panther. T'Challa was
+    such a crazy character and don't even get me started with Erik Killmonger. His character is soo complex. It's like peeling an
+    oniong meaning it's just layers and layers of mystery. Everything about that movie is amazing! Empahsizes so much on unity and
+    how you use that empowerment to overcome any other obstacles. The point I wanted to get out was just a simple hello! I must
+    say that the MCU have really outdone themself with the expansion of the team. Like come on! Who isn't excited for the new
+    Infinity War against the almighty Thanos, the destroyer and true ruler of the universe.  Once he has all the infinity stones
+    that dude would be unstoppable no matter how big the team is. Disney is just a monster house buying every company there is.
+    Good job to them and bad job with Star Wars: The Last Jedi LIKE COME ON!!!!!"""
