@@ -49,6 +49,7 @@ def start_engine(clientID, machineAddr, clients, serverAddr, serverPort, echoedM
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((serverAddr, serverPort))
+    done = ""
     #s.send('begin')
 
     #while True:
@@ -57,21 +58,23 @@ def start_engine(clientID, machineAddr, clients, serverAddr, serverPort, echoedM
         # start the time once msg is sent to server
         startTime = time.time()
         #echoData = "Message: " + str(echoedMsg) + " --> From Client: " + str(clientID) + "/" + str(machineAddr)
-        echoData = "Message: " + str(echoedMsg)
+        echoData = str(echoedMsg)
         # totalMessages = ""
         #  totalLenData = len(echoData)
         # this condition is meant for select/epoll server: once the list of messages have been iterated and sent
         # this specific client has to send a quit so that the server can move on to another client session
         if i == echoedNUM:
+            print ("We're done with the server now. Time to terminate this session eh!")
             print ("Client: " + str(clientID) + " --> has iterated through total number of messages to echo out. Server will be notified.")
-            s.send('done')
+            done = "done"
+            s.send(done.encode('utf-8'))
         else:
             s.send(echoData.encode('utf-8'))
             print ("Message was sent: " + echoData)
             # This value will continuously increment in value after every msg sent --> will output the total bytes sent to client
             totalMessages += echoData
 
-        recvMsg = s.recv(1024)
+        recvMsg = s.recv(2048)
         print ("Received Msg: " + str(recvMsg))
         # once we receive the echo back from server, we end the timer
         endTime = time.time()
@@ -102,16 +105,25 @@ def main():
     #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #s.connect((serverIP, port))
     output_file = open('Client-Output.txt','w')
-    #signal(SIGPIPE, SIG_DFL)
+    signal(SIGPIPE, SIG_DFL)
 
     #machineAddr = raw_input("What is your IP Address? (i.e. 192.168.0.X) ")
     machineAddr = '192.168.0.4'
     #clients = raw_input("How many clients would you like to spawn? (Enter an Integer value) ")
-    clients = '2'
+    clients = '20000'
     #echoedMsg = raw_input("What do you want to echo to the server? (Enter a string) ")
-    echoedMsg = "Hi"
+    echoedMsg = """Hey there server. It's me, your friendly neighbour Spiderman. Wait is that even right? Spiderman is the
+        most insane character in the MCU and come on.... Peter Parker is awesome especially his relationship with Mary Jane! I am
+        so getting out of context here. I am getting too hyped with MCU eversince we all went to go see Black Panther. T'Challa was
+        such a crazy character and don't even get me started with Erik Killmonger. His character is soo complex. It's like peeling an
+        oniong meaning it's just layers and layers of mystery. Everything about that movie is amazing! Empahsizes so much on unity and
+        how you use that empowerment to overcome any other obstacles. The point I wanted to get out was just a simple hello! I must
+        say that the MCU have really outdone themself with the expansion of the team. Like come on! Who isn't excited for the new
+        Infinity War against the almighty Thanos, the destroyer and true ruler of the universe.  Once he has all the infinity stones
+        that dude would be unstoppable no matter how big the team is. Disney is just a monster house buying every company there is.
+        Good job to them and bad job with Star Wars: The Last Jedi LIKE COME ON!!!!!"""
     #echoedNUM = raw_input("How many times do you want this message echoed from each client to the server? (Enter an integer value) ")
-    echoedNUM = '2'
+    echoedNUM = '30'
     option = raw_input("Would you like to commence the echo program? (type 'begin') ")
 
     totalRequests = ((int(clients) * int(echoedNUM)) + int(clients))
