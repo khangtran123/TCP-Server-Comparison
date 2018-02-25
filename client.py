@@ -34,7 +34,7 @@ def spawn_clients(machineAddr, clients, serverAddr, serverPort, echoedMsg, echoe
     totalRTT = 0
     for i in range(clients):
         #  threading.Thread() starts a new thread and passes in args
-        thread = threading.Thread(target=start_engine, args=(machineAddr, clientID, clients, serverAddr, serverPort, echoedMsg, echoedNUM, totalRequests, output_file, totalMessages, totalRTT))
+        thread = threading.Thread(target=start_engine, args=(i, machineAddr, clients, serverAddr, serverPort, echoedMsg, echoedNUM, totalRequests, output_file, totalMessages, totalRTT))
         #  now we want to load up the array "threadQueue"
         threadQueue.append(thread)
         print ("Starting Client #" + str(clientID))
@@ -45,7 +45,7 @@ def spawn_clients(machineAddr, clients, serverAddr, serverPort, echoedMsg, echoe
     for thread in threadQueue:
         thread.join()
 
-def start_engine(machineAddr, clientID, clients, serverAddr, serverPort, echoedMsg, echoedNUM, totalRequests, output_file, totalMessages, totalRTT):
+def start_engine(clientID, machineAddr, clients, serverAddr, serverPort, echoedMsg, echoedNUM, totalRequests, output_file, totalMessages, totalRTT):
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((serverAddr, serverPort))
@@ -70,6 +70,7 @@ def start_engine(machineAddr, clientID, clients, serverAddr, serverPort, echoedM
             print ("Message was sent: " + echoData)
             # This value will continuously increment in value after every msg sent --> will output the total bytes sent to client
             totalMessages += echoData
+
         recvMsg = s.recv(1024)
         print ("Received Msg: " + str(recvMsg))
         # once we receive the echo back from server, we end the timer
@@ -81,7 +82,7 @@ def start_engine(machineAddr, clientID, clients, serverAddr, serverPort, echoedM
         #  now we want to output the results of this echo stats to the log file
         output_file.write("\n Client #" + str(clientID) + " sent out a total of " + str(echoedNUM) + " messages with a total roundtrip time of " + str(RTT) + " seconds.")
         result_to_file(clients, totalRTT, avgRTT, totalMessages, totalRequests, output_file)
-        break
+        i += 1
 
 
 def result_to_file(clients, totalRTT, avgRTT, totalMessages, totalRequests, output_file):
@@ -101,7 +102,7 @@ def main():
     #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #s.connect((serverIP, port))
     output_file = open('Client-Output.txt','w')
-    signal(SIGPIPE, SIG_DFL)
+    #signal(SIGPIPE, SIG_DFL)
 
     #machineAddr = raw_input("What is your IP Address? (i.e. 192.168.0.X) ")
     machineAddr = '192.168.0.4'
